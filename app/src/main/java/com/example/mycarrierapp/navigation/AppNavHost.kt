@@ -6,6 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mycarrierapp.ui.ProfileScreen
+import com.example.mycarrierapp.ui.SearchScreen
 import com.example.mycarrierapp.ui.auth.AuthViewModel
 import com.example.mycarrierapp.ui.auth.LoginScreen
 import com.example.mycarrierapp.ui.auth.SignupScreen
@@ -31,6 +33,12 @@ fun AppNavHost(
         }
         composable(ROUTE_HOME) {
             HomeScreen(authViewModel, navController)
+        }
+        composable(ROUTE_SEARCH) {
+            SearchScreen(navController)
+        }
+        composable(ROUTE_PROFILE) {
+            ProfileScreen(navController)
         }
     }
 }

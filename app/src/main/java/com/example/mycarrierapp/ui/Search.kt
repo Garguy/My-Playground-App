@@ -14,11 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.mycarrierapp.ui.theme.AppTheme
 
 
 @Composable
-fun SearchScreen() {
+fun SearchScreen(navController: NavHostController) {
     // Column Composable,
     Column(
         modifier = Modifier
@@ -43,7 +45,7 @@ fun SearchScreen() {
 @Composable
 fun SearchScreenPreviewLight() {
     AppTheme {
-        SearchScreen()
+        SearchScreen(rememberNavController())
     }
 }
 
@@ -51,6 +53,6 @@ fun SearchScreenPreviewLight() {
 @Composable
 fun SearchScreenPreviewDark() {
     AppTheme {
-        SearchScreen()
+        SearchScreen(rememberNavController())
     }
 }
