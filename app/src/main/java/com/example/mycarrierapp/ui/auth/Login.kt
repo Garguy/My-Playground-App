@@ -2,6 +2,7 @@ package com.example.mycarrierapp.ui.auth
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,17 +11,21 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mycarrierapp.R
+import com.example.mycarrierapp.data.Resource
+import com.example.mycarrierapp.navigation.ROUTE_HOME
 import com.example.mycarrierapp.navigation.ROUTE_LOGIN
 import com.example.mycarrierapp.navigation.ROUTE_SIGNUP
 import com.example.mycarrierapp.ui.theme.AppTheme
@@ -28,15 +33,17 @@ import com.example.mycarrierapp.ui.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(authViewModel: AuthViewModel?, navController: NavHostController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    
+    val loginFlow = authViewModel?.loginFlow?.collectAsState()
     
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
         
-        val (refHeader, refEmail, refPassword, refButtonLogin, refTextSignup) = createRefs()
+        val (refHeader, refEmail, refPassword, refButtonLogin, refTextSignup, refLoader) = createRefs()
         val spacing = MaterialTheme.spacing
         
         Box(
@@ -89,6 +96,7 @@ fun LoginScreen(navController: NavController) {
                 end.linkTo(parent.end, spacing.large)
                 width = Dimension.fillToConstraints
             },
+            visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
                 autoCorrect = false,
@@ -99,7 +107,7 @@ fun LoginScreen(navController: NavController) {
         
         Button(
             onClick = {
-            
+                authViewModel?.login(email, password)
             },
             modifier = Modifier.constrainAs(refButtonLogin) {
                 top.linkTo(refPassword.bottom, spacing.large)
@@ -133,6 +141,30 @@ fun LoginScreen(navController: NavController) {
             color = MaterialTheme.colorScheme.onSurface
         )
         
+        loginFlow?.value?.let {
+            when (it) {
+                is Resource.Failure -> {
+                    val context = LocalContext.current
+                    Toast.makeText(context, it.exception.message, Toast.LENGTH_LONG).show()
+                }
+                is Resource.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.constrainAs(refLoader) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    })
+                }
+                is Resource.Success -> {
+                    LaunchedEffect(Unit) {
+                        navController.navigate(ROUTE_HOME) {
+                            popUpTo(ROUTE_LOGIN) { inclusive = true }
+                        }
+                    }
+                }
+            }
+        }
+        
     }
 }
 
@@ -140,7 +172,7 @@ fun LoginScreen(navController: NavController) {
 @Composable
 fun LoginScreenPreviewLight() {
     AppTheme {
-        LoginScreen(rememberNavController())
+        LoginScreen(null, rememberNavController())
     }
 }
 
@@ -148,6 +180,6 @@ fun LoginScreenPreviewLight() {
 @Composable
 fun LoginScreenPreviewDark() {
     AppTheme {
-        LoginScreen(rememberNavController())
+        LoginScreen(null, rememberNavController())
     }
 }

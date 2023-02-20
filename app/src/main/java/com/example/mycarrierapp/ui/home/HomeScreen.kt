@@ -15,12 +15,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.mycarrierapp.R
+import com.example.mycarrierapp.navigation.ROUTE_HOME
+import com.example.mycarrierapp.navigation.ROUTE_LOGIN
+import com.example.mycarrierapp.ui.auth.AuthViewModel
 import com.example.mycarrierapp.ui.theme.AppTheme
 import com.example.mycarrierapp.ui.theme.spacing
-import com.example.mycarrierapp.R
 
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(authViewModel: AuthViewModel?, navController: NavHostController) {
     val spacing = MaterialTheme.spacing
     Column(
         modifier = Modifier
@@ -38,7 +41,7 @@ fun HomeScreen(navController: NavHostController) {
         )
         
         Text(
-            text = stringResource(id = R.string.name),
+            text = authViewModel?.currentUser?.displayName ?: "",
             style = MaterialTheme.typography.displaySmall,
             color = MaterialTheme.colorScheme.onSurface
         )
@@ -68,7 +71,7 @@ fun HomeScreen(navController: NavHostController) {
                 )
                 
                 Text(
-                    text = "Belal Khan",
+                    text = authViewModel?.currentUser?.displayName ?: "",
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.weight(0.7f),
                     color = MaterialTheme.colorScheme.onSurface
@@ -88,7 +91,7 @@ fun HomeScreen(navController: NavHostController) {
                 )
                 
                 Text(
-                    text = "probelalkhan@gmail.com",
+                    text = authViewModel?.currentUser?.email ?: "",
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.weight(0.7f),
                     color = MaterialTheme.colorScheme.onSurface
@@ -96,7 +99,12 @@ fun HomeScreen(navController: NavHostController) {
             }
             
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    authViewModel?.logout()
+                    navController.navigate(ROUTE_LOGIN) {
+                        popUpTo(ROUTE_HOME) { inclusive = true }
+                    }
+                },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = spacing.extraLarge)
@@ -111,7 +119,7 @@ fun HomeScreen(navController: NavHostController) {
 @Composable
 fun HomeScreenPreviewLight() {
     AppTheme {
-        HomeScreen(rememberNavController())
+        HomeScreen(null, rememberNavController())
     }
 }
 
@@ -119,6 +127,6 @@ fun HomeScreenPreviewLight() {
 @Composable
 fun HomeScreenPreviewDark() {
     AppTheme {
-        HomeScreen(rememberNavController())
+        HomeScreen(null, rememberNavController())
     }
 }
