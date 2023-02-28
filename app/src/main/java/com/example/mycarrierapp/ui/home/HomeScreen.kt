@@ -23,7 +23,7 @@ import com.example.mycarrierapp.ui.theme.AppTheme
 import com.example.mycarrierapp.ui.theme.spacing
 
 @Composable
-fun HomeScreen(authViewModel: AuthViewModel?, navController: NavHostController) {
+fun HomeScreen(authViewModel: AuthViewModel?) {
     val spacing = MaterialTheme.spacing
     Column(
         modifier = Modifier

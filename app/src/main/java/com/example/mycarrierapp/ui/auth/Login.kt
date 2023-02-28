@@ -36,16 +36,16 @@ import com.example.mycarrierapp.ui.theme.spacing
 fun LoginScreen(authViewModel: AuthViewModel?, navController: NavHostController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    
+
     val loginFlow = authViewModel?.loginFlow?.collectAsState()
-    
+
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
-        
+
         val (refHeader, refEmail, refPassword, refButtonLogin, refTextSignup, refLoader) = createRefs()
         val spacing = MaterialTheme.spacing
-        
+
         Box(
             modifier = Modifier
                 .constrainAs(refHeader) {
@@ -58,8 +58,8 @@ fun LoginScreen(authViewModel: AuthViewModel?, navController: NavHostController)
         ) {
             AuthHeader()
         }
-        
-        
+
+
         TextField(
             value = email,
             onValueChange = {
@@ -81,7 +81,7 @@ fun LoginScreen(authViewModel: AuthViewModel?, navController: NavHostController)
                 imeAction = ImeAction.Next
             )
         )
-        
+
         TextField(
             value = password,
             onValueChange = {
@@ -104,7 +104,7 @@ fun LoginScreen(authViewModel: AuthViewModel?, navController: NavHostController)
                 imeAction = ImeAction.Done
             )
         )
-        
+
         Button(
             onClick = {
                 authViewModel?.login(email, password)
@@ -121,8 +121,8 @@ fun LoginScreen(authViewModel: AuthViewModel?, navController: NavHostController)
                 style = MaterialTheme.typography.titleMedium
             )
         }
-        
-        
+
+
         Text(
             modifier = Modifier
                 .constrainAs(refTextSignup) {
@@ -140,7 +140,7 @@ fun LoginScreen(authViewModel: AuthViewModel?, navController: NavHostController)
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurface
         )
-        
+
         loginFlow?.value?.let {
             when (it) {
                 is Resource.Failure -> {
@@ -164,7 +164,6 @@ fun LoginScreen(authViewModel: AuthViewModel?, navController: NavHostController)
                 }
             }
         }
-        
     }
 }
 
