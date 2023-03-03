@@ -144,6 +144,7 @@ fun LoginScreen(authViewModel: AuthViewModel?, navController: NavHostController)
         loginFlow?.value?.let {
             when (it) {
                 is Resource.Failure -> {
+                   // TODO("Add a forgot password section")
                     val context = LocalContext.current
                     Toast.makeText(context, it.exception.message, Toast.LENGTH_LONG).show()
                 }
