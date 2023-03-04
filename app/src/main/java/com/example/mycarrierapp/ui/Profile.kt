@@ -14,12 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.example.mycarrierapp.ui.auth.AuthViewModel
 import com.example.mycarrierapp.ui.theme.AppTheme
 
 @Composable
-fun ProfileScreen(navHostController: NavHostController) {
+fun ProfileScreen(authViewModel: AuthViewModel?) {
     // Column Composable,
     Column(
         modifier = Modifier
@@ -44,7 +43,7 @@ fun ProfileScreen(navHostController: NavHostController) {
 @Composable
 fun ProfileScreenPreviewLight() {
     AppTheme {
-        ProfileScreen(rememberNavController())
+        ProfileScreen(null)
     }
 }
 
@@ -52,6 +51,6 @@ fun ProfileScreenPreviewLight() {
 @Composable
 fun ProfileScreenPreviewDark() {
     AppTheme {
-        ProfileScreen(rememberNavController())
+        ProfileScreen(null)
     }
 }

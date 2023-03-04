@@ -26,9 +26,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mycarrierapp.R
 import com.example.mycarrierapp.data.Resource
-import com.example.mycarrierapp.navigation.ROUTE_HOME
-import com.example.mycarrierapp.navigation.ROUTE_LOGIN
-import com.example.mycarrierapp.navigation.ROUTE_SIGNUP
+import com.example.mycarrierapp.navigation.AuthScreen
+import com.example.mycarrierapp.ui.BottomBarScreen
 import com.example.mycarrierapp.ui.theme.AppTheme
 import com.example.mycarrierapp.ui.theme.spacing
 
@@ -150,8 +149,8 @@ fun SignupScreen(authViewModel: AuthViewModel?, navController: NavHostController
                     end.linkTo(parent.end, spacing.extraLarge)
                 }
                 .clickable {
-                    navController.navigate(ROUTE_LOGIN) {
-                        popUpTo(ROUTE_SIGNUP) { inclusive = true }
+                    navController.navigate(AuthScreen.Login.route) {
+                        popUpTo(AuthScreen.SignUp.route) { inclusive = true }
                     }
                 },
             text = stringResource(id = R.string.already_have_account),
@@ -176,8 +175,8 @@ fun SignupScreen(authViewModel: AuthViewModel?, navController: NavHostController
                 }
                 is Resource.Success -> {
                     LaunchedEffect(Unit) {
-                        navController.navigate(ROUTE_HOME) {
-                            popUpTo(ROUTE_LOGIN) { inclusive = true }
+                        navController.navigate(BottomBarScreen.Home.route) {
+                            popUpTo(AuthScreen.Login.route) { inclusive = true }
                         }
                     }
                 }
