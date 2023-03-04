@@ -1,12 +1,16 @@
 package com.example.mycarrierapp.ui.home
 
-import android.annotation.SuppressLint
 import android.content.res.Configuration
-import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -19,8 +23,7 @@ import com.example.mycarrierapp.ui.BottomBarScreen
 import com.example.mycarrierapp.ui.auth.AuthViewModel
 import com.example.mycarrierapp.ui.theme.AppTheme
 
-
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     authViewModel: AuthViewModel?,
@@ -29,8 +32,9 @@ fun HomeScreen(
     Scaffold(
         bottomBar = { BottomBar(navController = navController) }
     ) {
-        Log.d("HomeNavGraph Call", "HomeNavGraph being called from HomeScreen")
+        Box(modifier = Modifier.padding(it)) {
             HomeNavGraph(navController = navController, authViewModel = authViewModel!!)
+        }
     }
 }
 
@@ -47,7 +51,7 @@ fun BottomBar(navController: NavHostController) {
     val bottomBarDestination = screens.any { it.route == currentDestination?.route }
     if (bottomBarDestination) {
         BottomNavigation(
-            backgroundColor = MaterialTheme.colors.secondary
+            backgroundColor = MaterialTheme.colorScheme.primaryContainer
         ) {
             screens.forEach { screens ->
                 AddItem(
@@ -68,13 +72,13 @@ fun RowScope.AddItem(
 ) {
     BottomNavigationItem(
         label = {
-            Text(text = screen.title, color = MaterialTheme.colors.secondaryVariant)
+            Text(text = screen.title, color = MaterialTheme.colorScheme.onSecondaryContainer)
         },
         icon = {
             Icon(
                 imageVector = screen.icon,
                 contentDescription = "Navigation Icon",
-                tint = MaterialTheme.colors.secondaryVariant
+                tint = MaterialTheme.colorScheme.onSecondaryContainer
             )
         },
         selected = currentDestination?.hierarchy?.any {
