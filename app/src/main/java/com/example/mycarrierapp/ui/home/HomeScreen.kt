@@ -1,118 +1,97 @@
 package com.example.mycarrierapp.ui.home
 
 import android.content.res.Configuration
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.mycarrierapp.R
-import com.example.mycarrierapp.navigation.ROUTE_HOME
-import com.example.mycarrierapp.navigation.ROUTE_LOGIN
+import com.example.mycarrierapp.navigation.HomeNavGraph
+import com.example.mycarrierapp.ui.BottomBarScreen
 import com.example.mycarrierapp.ui.auth.AuthViewModel
 import com.example.mycarrierapp.ui.theme.AppTheme
-import com.example.mycarrierapp.ui.theme.spacing
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreen(
+    authViewModel: AuthViewModel?,
+    navController: NavHostController = rememberNavController()
+) {
+    Scaffold(
+        bottomBar = { BottomBar(navController = navController) }
+    ) {
+        Box(modifier = Modifier.padding(it)) {
+            HomeNavGraph(navController = navController, authViewModel = authViewModel!!)
+        }
+    }
+}
 
 @Composable
-fun HomeScreen(authViewModel: AuthViewModel?, navController: NavHostController) {
-    val spacing = MaterialTheme.spacing
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(spacing.medium)
-            .padding(top = spacing.extraLarge),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        
-        Text(
-            text = stringResource(id = R.string.welcome_back),
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        
-        Text(
-            text = authViewModel?.currentUser?.displayName ?: "",
-            style = MaterialTheme.typography.displaySmall,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        
-        Image(
-            painter = painterResource(id = R.drawable.ic_person),
-            contentDescription = stringResource(id = R.string.empty),
-            modifier = Modifier.size(128.dp)
-        )
-        
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(spacing.medium)
+fun BottomBar(navController: NavHostController) {
+    val screens = listOf(
+        BottomBarScreen.Search,
+        BottomBarScreen.Home,
+        BottomBarScreen.Profile
+    )
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    
+    val bottomBarDestination = screens.any { it.route == currentDestination?.route }
+    if (bottomBarDestination) {
+        BottomNavigation(
+            backgroundColor = MaterialTheme.colorScheme.primaryContainer
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            ) {
-                Text(
-                    text = stringResource(id = R.string.name),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(0.3f),
-                    color = MaterialTheme.colorScheme.onSurface
+            screens.forEach { screens ->
+                AddItem(
+                    screen = screens,
+                    currentDestination = currentDestination,
+                    navController = navController
                 )
-                
-                Text(
-                    text = authViewModel?.currentUser?.displayName ?: "",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(0.7f),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-            
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            ) {
-                Text(
-                    text = stringResource(id = R.string.email),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(0.3f),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                
-                Text(
-                    text = authViewModel?.currentUser?.email ?: "",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(0.7f),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-            
-            Button(
-                onClick = {
-                    authViewModel?.logout()
-                    navController.navigate(ROUTE_LOGIN) {
-                        popUpTo(ROUTE_HOME) { inclusive = true }
-                    }
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = spacing.extraLarge)
-            ) {
-                Text(text = stringResource(id = R.string.logout))
             }
         }
     }
+}
+
+@Composable
+fun RowScope.AddItem(
+    screen: BottomBarScreen,
+    currentDestination: NavDestination?,
+    navController: NavHostController
+) {
+    BottomNavigationItem(
+        label = {
+            Text(text = screen.title, color = MaterialTheme.colorScheme.onSecondaryContainer)
+        },
+        icon = {
+            Icon(
+                imageVector = screen.icon,
+                contentDescription = "Navigation Icon",
+                tint = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+        },
+        selected = currentDestination?.hierarchy?.any {
+            it.route == screen.route
+        } == true,
+        unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
+        onClick = {
+            navController.navigate(screen.route) {
+                popUpTo(navController.graph.findStartDestination().id)
+                launchSingleTop = true
+            }
+        }
+    )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
