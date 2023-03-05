@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.mycarrierapp.ScreenContent
 import com.example.mycarrierapp.ui.BottomBarScreen
+import com.example.mycarrierapp.ui.ProfileScreen
+import com.example.mycarrierapp.ui.SearchScreen
 import com.example.mycarrierapp.ui.auth.AuthViewModel
 
 @Composable
@@ -15,10 +17,7 @@ fun HomeNavGraph(navController: NavHostController, authViewModel: AuthViewModel)
         startDestination = BottomBarScreen.Home.route
     ) {
         composable(route = BottomBarScreen.Search.route) {
-            ScreenContent(
-                name = BottomBarScreen.Search.route,
-                onClick = {}
-            )
+            SearchScreen()
         }
         composable(route = BottomBarScreen.Home.route) {
             ScreenContent(
@@ -27,9 +26,8 @@ fun HomeNavGraph(navController: NavHostController, authViewModel: AuthViewModel)
             )
         }
         composable(route = BottomBarScreen.Profile.route) {
-            ScreenContent(
-                name = BottomBarScreen.Profile.route,
-                onClick = {}
+            ProfileScreen(
+                authViewModel = authViewModel
             )
         }
     }
