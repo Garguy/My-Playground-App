@@ -6,7 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.mycarrierapp.ui.auth.AuthViewModel
-import com.example.mycarrierapp.ui.home.HomeScreen
+import com.example.mycarrierapp.ui.screens.HomeScreen
 
 @Composable
 fun RootNavigationGraph(navController: NavHostController, authViewModel: AuthViewModel) {

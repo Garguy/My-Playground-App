@@ -25,7 +25,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mycarrierapp.R
-import com.example.mycarrierapp.data.Resource
+import com.example.mycarrierapp.data.FirebaseResource
 import com.example.mycarrierapp.navigation.AuthScreen
 import com.example.mycarrierapp.ui.BottomBarScreen
 import com.example.mycarrierapp.ui.theme.AppTheme
@@ -161,11 +161,11 @@ fun SignupScreen(authViewModel: AuthViewModel?, navController: NavHostController
         
         signupFlow?.value?.let {
             when (it) {
-                is Resource.Failure -> {
+                is FirebaseResource.Failure -> {
                     val context = LocalContext.current
                     Toast.makeText(context, it.exception.message, Toast.LENGTH_LONG).show()
                 }
-                is Resource.Loading -> {
+                is FirebaseResource.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.constrainAs(refLoader) {
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
@@ -173,7 +173,7 @@ fun SignupScreen(authViewModel: AuthViewModel?, navController: NavHostController
                         end.linkTo(parent.end)
                     })
                 }
-                is Resource.Success -> {
+                is FirebaseResource.Success -> {
                     LaunchedEffect(Unit) {
                         navController.navigate(BottomBarScreen.Home.route) {
                             popUpTo(AuthScreen.Login.route) { inclusive = true }
