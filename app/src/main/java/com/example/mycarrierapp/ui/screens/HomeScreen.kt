@@ -1,6 +1,5 @@
 package com.example.mycarrierapp.ui.screens
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
@@ -11,7 +10,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -21,7 +19,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mycarrierapp.navigation.HomeNavGraph
 import com.example.mycarrierapp.ui.BottomBarScreen
 import com.example.mycarrierapp.ui.auth.AuthViewModel
-import com.example.mycarrierapp.ui.theme.AppTheme
 
 @Composable
 fun HomeScreen(
@@ -91,20 +88,4 @@ fun RowScope.AddItem(
             }
         }
     )
-}
-
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Composable
-fun HomeScreenPreviewLight() {
-    AppTheme {
-        HomeScreen(null, rememberNavController())
-    }
-}
-
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun HomeScreenPreviewDark() {
-    AppTheme {
-        HomeScreen(null, rememberNavController())
-    }
 }
