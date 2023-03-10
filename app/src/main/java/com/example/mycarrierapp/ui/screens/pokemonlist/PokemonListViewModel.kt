@@ -1,4 +1,4 @@
-package com.example.mycarrierapp.pokemonlist
+package com.example.mycarrierapp.ui.screens.pokemonlist
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -13,6 +13,7 @@ import com.example.mycarrierapp.data.models.PokemonListEntry
 import com.example.mycarrierapp.di.repository.PokemonRepositoryImpl
 import com.example.mycarrierapp.utils.Constants.PAGE_SIZE
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -29,15 +30,45 @@ class PokemonListViewModel @Inject constructor(
     var isLoading = mutableStateOf(false)
     var endReached = mutableStateOf(false)
 
+    private var cachedPokemonList = listOf<PokemonListEntry>()
+    private var isSearchStarting = true
+    var isSearching = mutableStateOf(false)
+
     init {
         loadPokemonPaginated()
+    }
+
+    fun searchPokemonList(query: String) {
+        val listToSearch = if (isSearchStarting) {
+            pokemonList.value
+        } else {
+            cachedPokemonList
+        }
+        viewModelScope.launch(Dispatchers.Default) {
+            if (query.isEmpty()) {
+                pokemonList.value = cachedPokemonList
+                isSearching.value = false
+                isSearchStarting = true
+                return@launch
+            }
+            val results = listToSearch.filter {
+                it.pokemonName.contains(query.trim(), ignoreCase = true) ||
+                        it.number.toString() == query.trim()
+            }
+            if (isSearchStarting) {
+                cachedPokemonList = pokemonList.value
+                isSearchStarting = false
+            }
+            pokemonList.value = results
+            isSearching.value = false
+        }
     }
 
     fun loadPokemonPaginated() {
         viewModelScope.launch {
             isLoading.value = true
             val result = repositoryImpl.getPokemonList(PAGE_SIZE, currentPage * PAGE_SIZE)
-            when(result) {
+            when (result) {
                 is ApiResource.Success -> {
                     endReached.value = currentPage * PAGE_SIZE >= result.data.count
 
@@ -49,7 +80,8 @@ class PokemonListViewModel @Inject constructor(
                         } else {
                             entry.url.takeLastWhile { it.isDigit() }
                         }
-                        val url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${number}.png"
+                        val url =
+                            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${number}.png"
                         PokemonListEntry(entry.name.capitalize(Locale.ROOT), url, number.toInt())
                     }
                     currentPage++
@@ -61,6 +93,9 @@ class PokemonListViewModel @Inject constructor(
                 is ApiResource.Failure -> {
                     loadError.value = result.exception.toString()
                     isLoading.value = false
+                }
+                is ApiResource.Loading -> {
+                    // no op
                 }
             }
         }
