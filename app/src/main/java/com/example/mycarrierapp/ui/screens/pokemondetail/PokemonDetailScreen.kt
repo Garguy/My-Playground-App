@@ -108,9 +108,12 @@ fun PokemonDetailScreen(
 }
 
 @Composable
-fun PokemonDetailTopSection(navController: NavController, modifier: Modifier = Modifier) {
+fun PokemonDetailTopSection(
+    navController: NavController,
+    modifier: Modifier = Modifier
+) {
     Box(
-        contentAlignment = Alignment.TopCenter,
+        contentAlignment = Alignment.TopStart,
         modifier = modifier
             .background(
                 Brush.verticalGradient(
@@ -120,12 +123,11 @@ fun PokemonDetailTopSection(navController: NavController, modifier: Modifier = M
                     )
                 )
             )
-    )
-    {
+    ) {
         Icon(
             imageVector = Icons.Default.ArrowBack,
             contentDescription = null,
-            tint = MaterialTheme.colors.onSurface,
+            tint = Color.White,
             modifier = Modifier
                 .size(36.dp)
                 .offset(16.dp, 16.dp)
