@@ -2,8 +2,8 @@ package com.example.mycarrierapp.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class BottomBarScreen(
@@ -18,9 +18,9 @@ sealed class BottomBarScreen(
     )
     
     object Search: BottomBarScreen(
-        route = "SEARCH",
-        title = "SEARCH",
-        icon = Icons.Default.Search
+        route = "MAP",
+        title = "MAP",
+        icon = Icons.Default.LocationOn
     )
     
     object Profile: BottomBarScreen(
