@@ -40,7 +40,11 @@ import com.example.mycarrierapp.ui.theme.AppTheme
 import com.skydoves.landscapist.coil.CoilImage
 
 @Composable
-fun PokemonListScreen(onClick: () -> Unit, viewModel: PokemonListViewModel = hiltViewModel(), navController: NavController) {
+fun PokemonListScreen(
+    onClick: () -> Unit,
+    viewModel: PokemonListViewModel = hiltViewModel(),
+    navController: NavController
+) {
     Surface(
         color = MaterialTheme.colors.background,
         modifier = Modifier.fillMaxSize()
@@ -131,7 +135,9 @@ fun PokemonList(
         }
         items(itemCount) {
             if (it >= itemCount - 1 && !endReached && !isLoading && !isSearching) {
-                viewModel.loadPokemonPaginated()
+                LaunchedEffect(key1 = true) {
+                    viewModel.loadPokemonPaginated()
+                }
             }
             PokemonRow(rowIndex = it, entries = pokemonList, navController = navController)
         }
@@ -176,16 +182,20 @@ fun PokemonEntry(
                 imageRequest = {
                     ImageRequest.Builder(context)
                         .data(entry.imageUrl)
-                        .target {
-                            viewModel.calcDominateColor(it) { color ->
-                                dominantColor = color
-                            }
-                        }
+                        .allowConversionToBitmap(true)
                         .build()
                 },
                 modifier = Modifier
                     .size(120.dp)
                     .align(CenterHorizontally),
+                success = { result ->
+                    val drawable = result.drawable
+                    drawable?.let {
+                        viewModel.calcDominateColor(it) { color ->
+                            dominantColor = color
+                        }
+                    }
+                },
                 loading = {
                     CircularProgressIndicator(
                         color = MaterialTheme.colors.primary,
@@ -237,7 +247,7 @@ fun PokemonRow(
 @Composable
 fun PokemonListScreenPreviewLight() {
     AppTheme {
-        PokemonListScreen(onClick = {  }, navController = rememberNavController())
+        PokemonListScreen(onClick = { }, navController = rememberNavController())
     }
 }
 
@@ -245,6 +255,6 @@ fun PokemonListScreenPreviewLight() {
 @Composable
 fun PokemonListScreenPreviewDark() {
     AppTheme {
-        PokemonListScreen(onClick = { },  navController = rememberNavController())
+        PokemonListScreen(onClick = { }, navController = rememberNavController())
     }
 }
