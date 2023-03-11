@@ -8,8 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.mycarrierapp.PokemonListScreen
 import com.example.mycarrierapp.ui.BottomBarScreen
+import com.example.mycarrierapp.ui.MapScreen
 import com.example.mycarrierapp.ui.ProfileScreen
-import com.example.mycarrierapp.ui.SearchScreen
 import com.example.mycarrierapp.ui.auth.AuthViewModel
 import com.example.mycarrierapp.ui.screens.PokemonDetailScreen
 import java.util.*
@@ -21,7 +21,7 @@ fun HomeNavGraph(navController: NavHostController, authViewModel: AuthViewModel)
         startDestination = BottomBarScreen.Home.route
     ) {
         composable(route = BottomBarScreen.Search.route) {
-            SearchScreen()
+            MapScreen()
         }
         composable(route = BottomBarScreen.Home.route) {
             PokemonListScreen(
