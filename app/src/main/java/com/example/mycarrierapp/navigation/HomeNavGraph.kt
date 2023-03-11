@@ -12,6 +12,7 @@ import com.example.mycarrierapp.ui.ProfileScreen
 import com.example.mycarrierapp.ui.SearchScreen
 import com.example.mycarrierapp.ui.auth.AuthViewModel
 import com.example.mycarrierapp.ui.screens.PokemonDetailScreen
+import java.util.*
 
 @Composable
 fun HomeNavGraph(navController: NavHostController, authViewModel: AuthViewModel) {
@@ -26,7 +27,8 @@ fun HomeNavGraph(navController: NavHostController, authViewModel: AuthViewModel)
             PokemonListScreen(
                 onClick = {
                     navController.navigate(Graph.DETAILS)
-                }
+                },
+                navController = navController
             )
         }
         composable(route = BottomBarScreen.Profile.route) {
@@ -60,11 +62,15 @@ fun NavGraphBuilder.detailsNavGraph(navController: NavHostController) {
             val pokemonName = remember {
                 it.arguments?.getString("pokemonName")
             }
-            PokemonDetailScreen(dominantColor, pokemonName)
+            PokemonDetailScreen(
+                dominantColor = dominantColor,
+                pokemonName = pokemonName?.lowercase(Locale.ROOT) ?: "",
+                navController = navController
+            )
         }
     }
 }
 
 sealed class DetailsScreen(val route: String) {
-    object Detail : DetailsScreen(route = "detail/{dominantColor}/{pokemonName}")
+    object Detail : DetailsScreen(route = "pokemon_detail_screen/{dominantColor}/{pokemonName}")
 }

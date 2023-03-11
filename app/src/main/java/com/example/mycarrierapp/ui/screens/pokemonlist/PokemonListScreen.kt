@@ -1,6 +1,8 @@
 package com.example.mycarrierapp
 
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,6 +16,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,8 +25,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -33,14 +37,19 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.request.ImageRequest
 import com.example.mycarrierapp.data.models.PokemonListEntry
-import com.example.mycarrierapp.pokemonlist.PokemonListViewModel
+import com.example.mycarrierapp.ui.screens.pokemonlist.PokemonListViewModel
 import com.example.mycarrierapp.ui.theme.AppTheme
-import com.skydoves.landscapist.coil.CoilImage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.net.URL
 
 @Composable
-fun PokemonListScreen(onClick: () -> Unit) {
+fun PokemonListScreen(
+    onClick: () -> Unit,
+    viewModel: PokemonListViewModel = hiltViewModel(),
+    navController: NavController
+) {
     Surface(
         color = MaterialTheme.colors.background,
         modifier = Modifier.fillMaxSize()
@@ -59,11 +68,11 @@ fun PokemonListScreen(onClick: () -> Unit) {
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-
+                viewModel.searchPokemonList(it)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            PokemonList(navController = rememberNavController())
+            PokemonList(navController = navController)
 
         }
 
@@ -99,7 +108,7 @@ fun SearchBar(
                 .background(color = Color.White, shape = CircleShape)
                 .padding(horizontal = 20.dp, vertical = 20.dp)
                 .onFocusChanged {
-                    isHintDisplayed = !it.hasFocus && text.isEmpty()
+                    isHintDisplayed = !it.isFocused && text.isEmpty()
                 }
         )
         if (isHintDisplayed) {
@@ -121,6 +130,7 @@ fun PokemonList(
     val endReached by remember { viewModel.endReached }
     val loadError by remember { viewModel.loadError }
     val isLoading by remember { viewModel.isLoading }
+    val isSearching by remember { viewModel.isSearching }
 
     LazyColumn(contentPadding = PaddingValues(16.dp)) {
         val itemCount = if (pokemonList.size % 2 == 0) {
@@ -129,8 +139,10 @@ fun PokemonList(
             pokemonList.size / 2 + 1
         }
         items(itemCount) {
-            if (it >= itemCount - 1 && !endReached) {
-                viewModel.loadPokemonPaginated()
+            if (it >= itemCount - 1 && !endReached && !isLoading && !isSearching) {
+                LaunchedEffect(key1 = true) {
+                    viewModel.loadPokemonPaginated()
+                }
             }
             PokemonRow(rowIndex = it, entries = pokemonList, navController = navController)
         }
@@ -145,11 +157,9 @@ fun PokemonEntry(
     viewModel: PokemonListViewModel = hiltViewModel()
 ) {
     val defaultDominantColor = MaterialTheme.colors.surface
-    var dominantColor by remember {
-        mutableStateOf(defaultDominantColor)
-    }
-
-    val context = LocalContext.current
+    var dominantColor by remember { mutableStateOf(defaultDominantColor) }
+    var bitmap: Bitmap? by remember { mutableStateOf(null) }
+    var isLoading by remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier
@@ -166,26 +176,28 @@ fun PokemonEntry(
             )
             .clickable {
                 navController.navigate(
-                    "detail/${dominantColor.toArgb()}/${entry.pokemonName}"
+                    "pokemon_detail_screen/${dominantColor.toArgb()}/${entry.pokemonName}"
                 )
             }
     ) {
         Column {
-            CoilImage(
-                imageRequest = {
-                    ImageRequest.Builder(context)
-                        .data(entry.imageUrl)
-                        .target {
-                            viewModel.calcDominateColor(it) { color ->
-                                dominantColor = color
-                            }
-                        }
-                        .build()
-                },
-                modifier = Modifier
-                    .size(120.dp)
-                    .align(CenterHorizontally),
-                loading = {
+            LaunchedEffect(key1 = entry.imageUrl) {
+                withContext(Dispatchers.IO) {
+                    isLoading = true
+                    val stream = URL(entry.imageUrl).openStream()
+                    bitmap = BitmapFactory.decodeStream(stream)
+                    stream.close()
+                }
+                isLoading = false
+            }
+
+            if (isLoading) {
+                Box(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .align(CenterHorizontally),
+                    contentAlignment = Alignment.Center
+                ) {
                     CircularProgressIndicator(
                         color = MaterialTheme.colors.primary,
                         modifier = Modifier
@@ -193,13 +205,28 @@ fun PokemonEntry(
                             .fillMaxSize()
                     )
                 }
-            )
-            Text(
-                text = entry.pokemonName,
-                fontSize = 20.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            } else {
+                bitmap?.let {
+                    viewModel.calcDominateColor(it) { color ->
+                        dominantColor = color
+                    }
+
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentDescription = entry.pokemonName,
+                        modifier = Modifier
+                            .size(120.dp)
+                            .align(CenterHorizontally),
+                        contentScale = ContentScale.Crop,
+                    )
+                }
+                Text(
+                    text = entry.pokemonName,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
     }
 }
@@ -236,7 +263,7 @@ fun PokemonRow(
 @Composable
 fun PokemonListScreenPreviewLight() {
     AppTheme {
-        PokemonListScreen(onClick = { })
+        PokemonListScreen(onClick = { }, navController = rememberNavController())
     }
 }
 
@@ -244,6 +271,6 @@ fun PokemonListScreenPreviewLight() {
 @Composable
 fun PokemonListScreenPreviewDark() {
     AppTheme {
-        PokemonListScreen(onClick = { })
+        PokemonListScreen(onClick = { }, navController = rememberNavController())
     }
 }
