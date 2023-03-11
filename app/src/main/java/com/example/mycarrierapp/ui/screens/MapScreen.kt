@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,7 +18,7 @@ import com.example.mycarrierapp.ui.theme.AppTheme
 
 
 @Composable
-fun SearchScreen() {
+fun MapScreen() {
     // Column Composable,
     Column(
         modifier = Modifier
@@ -30,8 +30,8 @@ fun SearchScreen() {
     ) {
         // Icon Composable
         Icon(
-            imageVector = Icons.Default.Search,
-            contentDescription = "search",
+            imageVector = Icons.Default.LocationOn,
+            contentDescription = "map",
             tint = MaterialTheme.colorScheme.primary
         )
         // Text to Display the current Screen
@@ -43,7 +43,7 @@ fun SearchScreen() {
 @Composable
 fun SearchScreenPreviewLight() {
     AppTheme {
-        SearchScreen()
+        MapScreen()
     }
 }
 
@@ -51,6 +51,6 @@ fun SearchScreenPreviewLight() {
 @Composable
 fun SearchScreenPreviewDark() {
     AppTheme {
-        SearchScreen()
+        MapScreen()
     }
 }
