@@ -25,9 +25,6 @@ fun HomeNavGraph(navController: NavHostController, authViewModel: AuthViewModel)
         }
         composable(route = BottomBarScreen.Home.route) {
             PokemonListScreen(
-                onClick = {
-                    navController.navigate(Graph.DETAILS)
-                },
                 navController = navController
             )
         }
