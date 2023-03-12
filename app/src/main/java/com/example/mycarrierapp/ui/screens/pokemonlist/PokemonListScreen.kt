@@ -46,7 +46,6 @@ import java.net.URL
 
 @Composable
 fun PokemonListScreen(
-    onClick: () -> Unit,
     viewModel: PokemonListViewModel = hiltViewModel(),
     navController: NavController
 ) {
@@ -263,7 +262,7 @@ fun PokemonRow(
 @Composable
 fun PokemonListScreenPreviewLight() {
     AppTheme {
-        PokemonListScreen(onClick = { }, navController = rememberNavController())
+        PokemonListScreen(navController = rememberNavController())
     }
 }
 
@@ -271,6 +270,6 @@ fun PokemonListScreenPreviewLight() {
 @Composable
 fun PokemonListScreenPreviewDark() {
     AppTheme {
-        PokemonListScreen(onClick = { }, navController = rememberNavController())
+        PokemonListScreen(navController = rememberNavController())
     }
 }
