@@ -15,7 +15,7 @@ This project is an Android application that aims to be a sandbox to try new thin
     - ViewModel - UI related data holder, lifecycle aware.
 - Architecture
     - MVVM Architecture (View - ViewModel - Model)
-    - Repository pattern
+![MyCarrierAppFlow](https://user-images.githubusercontent.com/11683858/224515872-124de992-e6be-4690-a388-433c4f3cdd2c.png)
 - Material Design & Animations
 - [Accompanist](https://github.com/google/accompanist) - A collection of extension libraries for Jetpack Compose.
 - [Landscapist](https://github.com/skydoves/landscapist) - Jetpack Compose image loading library with shimmer & circular reveal animations.

@@ -25,9 +25,6 @@ fun HomeNavGraph(navController: NavHostController, authViewModel: AuthViewModel)
         }
         composable(route = BottomBarScreen.Home.route) {
             PokemonListScreen(
-                onClick = {
-                    navController.navigate(Graph.DETAILS)
-                },
                 navController = navController
             )
         }
@@ -43,10 +40,10 @@ fun HomeNavGraph(navController: NavHostController, authViewModel: AuthViewModel)
 fun NavGraphBuilder.detailsNavGraph(navController: NavHostController) {
     navigation(
         route = Graph.DETAILS,
-        startDestination = DetailsScreen.Detail.route
+        startDestination = DetailsScreen.PokemonDetail.route
     ) {
         composable(
-            route = DetailsScreen.Detail.route,
+            route = DetailsScreen.PokemonDetail.route,
             arguments = listOf(
                 navArgument("dominantColor") {
                     type = NavType.IntType
@@ -72,5 +69,5 @@ fun NavGraphBuilder.detailsNavGraph(navController: NavHostController) {
 }
 
 sealed class DetailsScreen(val route: String) {
-    object Detail : DetailsScreen(route = "pokemon_detail_screen/{dominantColor}/{pokemonName}")
+    object PokemonDetail : DetailsScreen(route = "pokemon_detail_screen/{dominantColor}/{pokemonName}")
 }
