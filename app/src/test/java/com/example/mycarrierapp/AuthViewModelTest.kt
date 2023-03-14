@@ -30,8 +30,6 @@ class AuthViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
 
-    private val testScope = TestCoroutineScope(testDispatcher)
-
     @Before
     fun setUp() {
         MockitoAnnotations.openMocks(this)
@@ -40,7 +38,7 @@ class AuthViewModelTest {
     }
 
     @Test
-    fun testLoginSuccess() = testScope.runTest {
+    fun testLoginSuccess() = TestScope().runTest {
         val email = "test@example.com"
         val password = "password"
         val user = mock(FirebaseUser::class.java)
@@ -53,7 +51,7 @@ class AuthViewModelTest {
     }
 
     @Test
-    fun testLoginFailure() = testScope.runTest {
+    fun testLoginFailure() = TestScope().runTest {
         val email = "test@example.com"
         val password = "password"
         val exception = Exception("Invalid credentials")
@@ -66,7 +64,7 @@ class AuthViewModelTest {
     }
 
     @Test
-    fun testSignupSuccess() = testScope.runTest {
+    fun testSignupSuccess() = TestScope().runTest {
         val name = "John Doe"
         val email = "john.doe@example.com"
         val password = "password"
@@ -79,7 +77,7 @@ class AuthViewModelTest {
     }
 
     @Test
-    fun testSignupFailure() = testScope.runTest {
+    fun testSignupFailure() = TestScope().runTest {
         val name = "John Doe"
         val email = "john.doe@example.com"
         val password = "password"
@@ -102,6 +100,5 @@ class AuthViewModelTest {
     @After
     fun tearDown() {
         Dispatchers.resetMain()
-        testScope.cleanupTestCoroutines()
     }
 }
