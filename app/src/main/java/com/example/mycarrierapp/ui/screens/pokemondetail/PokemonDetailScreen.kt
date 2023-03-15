@@ -32,8 +32,8 @@ import androidx.navigation.NavController
 import coil.request.ImageRequest
 import com.example.mycarrierapp.R
 import com.example.mycarrierapp.data.ApiResource
-import com.example.mycarrierapp.data.remote.responses.Pokemon
-import com.example.mycarrierapp.data.remote.responses.Type
+import com.example.mycarrierapp.data.remote.dto.Pokemon
+import com.example.mycarrierapp.data.remote.dto.Type
 import com.example.mycarrierapp.ui.screens.pokemondetail.PokemonDetailViewModel
 import com.example.mycarrierapp.utils.parseStatToAbbr
 import com.example.mycarrierapp.utils.parseStatToColor
