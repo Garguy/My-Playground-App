@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.palette.graphics.Palette
 import com.example.mycarrierapp.data.ApiResource
 import com.example.mycarrierapp.data.models.PokemonListEntry
-import com.example.mycarrierapp.di.repository.PokemonRepositoryImpl
+import com.example.mycarrierapp.di.repository.PokemonRepository
 import com.example.mycarrierapp.utils.Constants.PAGE_SIZE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PokemonListViewModel @Inject constructor(
-    private val repositoryImpl: PokemonRepositoryImpl
+    private val repository: PokemonRepository
 ) : ViewModel() {
 
     private var currentPage = 0
@@ -65,7 +65,7 @@ class PokemonListViewModel @Inject constructor(
     fun loadPokemonPaginated() {
         viewModelScope.launch {
             isLoading.value = true
-            val result = repositoryImpl.getPokemonList(PAGE_SIZE, currentPage * PAGE_SIZE)
+            val result = repository.getPokemonList(PAGE_SIZE, currentPage * PAGE_SIZE)
             when (result) {
                 is ApiResource.Success -> {
                     endReached.value = currentPage * PAGE_SIZE >= result.data.count
