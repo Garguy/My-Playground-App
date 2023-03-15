@@ -1,8 +1,8 @@
 package com.example.mycarrierapp.utils
 
 import androidx.compose.ui.graphics.Color
-import com.example.mycarrierapp.data.remote.responses.Stat
-import com.example.mycarrierapp.data.remote.responses.Type
+import com.example.mycarrierapp.data.remote.dto.Stat
+import com.example.mycarrierapp.data.remote.dto.Type
 import com.example.mycarrierapp.ui.theme.*
 import java.util.*
 

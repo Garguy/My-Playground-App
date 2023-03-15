@@ -1,7 +1,7 @@
 package com.example.mycarrierapp.data.remote
 
-import com.example.mycarrierapp.data.remote.responses.Pokemon
-import com.example.mycarrierapp.data.remote.responses.PokemonList
+import com.example.mycarrierapp.data.remote.dto.Pokemon
+import com.example.mycarrierapp.data.remote.dto.PokemonList
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
